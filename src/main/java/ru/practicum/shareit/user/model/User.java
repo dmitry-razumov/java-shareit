@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.*;
+import lombok.Data;
+import lombok.Builder;
 
 @Data
 @Builder

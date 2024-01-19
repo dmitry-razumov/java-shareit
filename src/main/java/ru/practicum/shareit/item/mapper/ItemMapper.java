@@ -6,10 +6,10 @@ import org.mapstruct.Mapper;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public abstract class ItemMapper {
-    public abstract ItemDto toItemDto(Item item);
+public interface ItemMapper {
+    ItemDto toItemDto(Item item);
 
-    public abstract List<ItemDto> toItemDto(List<Item> item);
+    List<ItemDto> toItemDto(List<Item> item);
 
-    public abstract Item toItem(ItemDto itemDto);
+    Item toItem(ItemDto itemDto);
 }

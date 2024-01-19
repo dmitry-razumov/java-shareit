@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.service;
 
+import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 import ru.practicum.shareit.exception.ValidationException;
@@ -15,7 +16,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         if (storage.isEmailExist(user)) {
-            throw new ValidationException("User с таким Email уже существует");
+            throw new ConflictException("User с таким Email уже существует");
         }
         return storage.create(user);
     }
@@ -24,13 +25,21 @@ public class UserServiceImpl implements UserService {
     public User update(User user) {
         User updatedUser = storage.getById(user.getId());
         if (user.getName() != null) {
-            updatedUser.setName(user.getName());
+            if (!user.getName().isBlank()) {
+                updatedUser.setName(user.getName());
+            } else {
+                throw new ValidationException("name не должно быть пробелом или пустым");
+            }
         }
         if (user.getEmail() != null) {
-            if (storage.isEmailExist(user)) {
-                throw new ValidationException("User с таким Email уже существует");
+            if (!user.getEmail().isBlank()) {
+                if (storage.isEmailExist(user)) {
+                    throw new ConflictException("User с таким Email уже существует");
+                }
+                updatedUser.setEmail(user.getEmail());
+            } else {
+                throw new ValidationException("email не должно быть пробелом или пустым");
             }
-            updatedUser.setEmail(user.getEmail());
         }
         return storage.update(updatedUser);
     }

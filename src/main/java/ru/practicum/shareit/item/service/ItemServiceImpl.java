@@ -5,6 +5,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.storage.UserStorage;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -32,10 +33,18 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Собственник вещи не совпадает");
         }
         if (item.getName() != null) {
-            updatedItem.setName(item.getName());
+            if (!item.getName().isBlank()) {
+                updatedItem.setName(item.getName());
+            } else {
+                throw new ValidationException("name не должно быть пробелом или пустым");
+            }
         }
         if (item.getDescription() != null) {
-            updatedItem.setDescription(item.getDescription());
+            if (!item.getDescription().isBlank()) {
+                updatedItem.setDescription(item.getDescription());
+            } else {
+                throw new ValidationException("description не должно быть пробелом или пустым");
+            }
         }
         if (item.getAvailable() != null) {
             updatedItem.setAvailable(item.getAvailable());
