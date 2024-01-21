@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable long id) {
         log.info("DELETE /users/{{}}", id);
         service.delete(id);
