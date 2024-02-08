@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,4 +26,7 @@ public class ItemDto {
             message = "available не должно быть null")
     private Boolean available;
     private ItemRequest request;
+    private BookingInItemField lastBooking;
+    private BookingInItemField nextBooking;
+    private List<CommentDto> comments;
 }
