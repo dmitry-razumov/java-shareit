@@ -1,23 +1,17 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
+import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
+@Data
 @Builder
 public class CommentDto {
     private Long id;
-    @NotBlank
+    @NotBlank (message = "text не должен быть пробелом, пустым или null")
     private String text;
-//    private Long itemId;
     private String authorName;
     private LocalDateTime created;
-    ItemInCommentField item;
+    private ItemInCommentField item;
 }

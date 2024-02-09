@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
                 throw new ValidationException("email не должно быть пробелом или пустым");
             }
         }
-        return userRepository.save(updatedUser);
+        return updatedUser;
     }
 
     @Override

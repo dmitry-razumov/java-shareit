@@ -77,9 +77,8 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Вещь с id=" + booking.getItem().getId() + " не доступна для бронирования");
         }
         booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
-        Booking updatedBooking = bookingRepository.save(booking);
-        log.info("обновлен статус бронирования - {}", updatedBooking);
-        return updatedBooking;
+        log.info("обновлен статус бронирования - {}", booking);
+        return booking;
     }
 
     @Override
@@ -135,8 +134,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllByOwnerItems(long userId, String state) {
-        User owner = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Booker с id=" + userId + " не найден"));
+        User owner = findUserByIdOrThrow(userId);
         LocalDateTime currentTime = LocalDateTime.now();
         List<Booking> listBooking;
         switch (getState(state)) {

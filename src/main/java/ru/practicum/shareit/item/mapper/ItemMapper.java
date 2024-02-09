@@ -16,14 +16,19 @@ public interface ItemMapper {
 
     List<ItemDto> toItemDto(List<Item> item);
 
+    @Mapping(target = "lastBooking", ignore = true)
+    @Mapping(target = "nextBooking", ignore = true)
+    @Mapping(target = "comments", ignore = true)
+    @Mapping(target = "request", ignore = true)
     Item toItem(ItemDto itemDto);
 
-//    @Mapping(target = "item.id", source = "item.id")
-//    @Mapping(target = "item.name", source = "item.name")
     @Mapping(target = "authorName", source = "author.name")
     CommentDto commentToDto(Comment comment);
 
     List<CommentDto> commentToDto(List<Comment> comment);
 
+    @Mapping(target = "author", ignore = true)
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "item", ignore = true)
     Comment dtoToComment(CommentDto commentDto);
 }

@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 import javax.persistence.*;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Builder
 @Data
 @AllArgsConstructor
@@ -19,9 +16,9 @@ import javax.persistence.*;
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
-    String description;
+    private long id;
+    private String description;
     @ManyToOne
     @JoinColumn(name = "requestor_id", referencedColumnName = "id")
-    User requestor;
+    private User requestor;
 }

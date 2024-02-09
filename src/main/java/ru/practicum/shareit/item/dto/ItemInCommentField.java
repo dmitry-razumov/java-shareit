@@ -1,11 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class ItemInCommentField {
-    long id;
-    String name;
+    private long id;
+    private String name;
 }

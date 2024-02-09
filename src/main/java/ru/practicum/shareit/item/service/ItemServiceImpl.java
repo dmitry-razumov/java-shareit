@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.item.model.Comment;
@@ -76,9 +75,8 @@ public class ItemServiceImpl implements ItemService {
         if (item.getAvailable() != null) {
             updatedItem.setAvailable(item.getAvailable());
         }
-        Item saveItem = itemRepository.save(updatedItem);
         log.info("обновлена item - {}", updatedItem);
-        return saveItem;
+        return updatedItem;
     }
 
     @Override

@@ -1,19 +1,14 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-//@NoArgsConstructor
-//@AllArgsConstructor
+@Data
 @Builder
 public class BookingInItemField {
-    long id;
-    LocalDateTime start;
-    LocalDateTime end;
-    long bookerId;
+    private long id;
+    private LocalDateTime start;
+    private LocalDateTime end;
+    private long bookerId;
 }
