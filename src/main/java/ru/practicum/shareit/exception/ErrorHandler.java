@@ -1,6 +1,7 @@
 package ru.practicum.shareit.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +25,15 @@ public class ErrorHandler {
         log.error(String.format("Conflict error: %s", e.getMessage()));
         log.error(String.format("stackTrace: %s", stackTrace(e)));
         return new ErrorResponse(String.format("Conflict error: %s", e.getMessage()),
+                String.format("stackTrace: %s", stackTrace(e)));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        log.error(String.format("DataIntegrityViolation error: %s", e.getMessage()));
+        log.error(String.format("stackTrace: %s", stackTrace(e)));
+        return new ErrorResponse(String.format("DataIntegrityViolation error: %s", e.getMessage()),
                 String.format("stackTrace: %s", stackTrace(e)));
     }
 
@@ -61,6 +71,15 @@ public class ErrorHandler {
         log.error(String.format("Validation error: %s", e.getMessage()));
         log.error(String.format("stackTrace: %s", stackTrace(e)));
         return new ErrorResponse(String.format("Internal error: %s", e.getMessage()),
+                String.format("stackTrace: %s", stackTrace(e)));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleUnsupportedException(UnsupportedException e) {
+        log.error(String.format("UnsupportedException: %s", e.getMessage()));
+        log.error(String.format("stackTrace: %s", stackTrace(e)));
+        return new ErrorResponse(String.format("%s", e.getMessage()),
                 String.format("stackTrace: %s", stackTrace(e)));
     }
 }
