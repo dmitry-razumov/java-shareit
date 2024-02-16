@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,16 +11,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    List<Booking> findAllByBookerIdOrderByStartDesc(long userId);
+    List<Booking> findAllByBookerIdOrderByStartDesc(long userId, Pageable pageable);
 
-    List<Booking> findAllByBookerIdAndEndBeforeOrderByStartDesc(long userId, LocalDateTime end);
+    List<Booking> findAllByBookerIdAndEndBeforeOrderByStartDesc(
+            long userId, LocalDateTime end, Pageable pageable);
 
-    List<Booking> findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
-            long userId, LocalDateTime start, LocalDateTime end);
+    List<Booking> findAllByBookerIdAndStartBeforeAndEndAfterOrderByEndDesc(
+            long userId, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
-    List<Booking> findAllByBookerIdAndStartAfterOrderByStartDesc(long userId, LocalDateTime start);
+    List<Booking> findAllByBookerIdAndStartAfterOrderByStartDesc(
+            long userId, LocalDateTime start, Pageable pageable);
 
-    List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(long userId, Status status);
+    List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(
+            long userId, Status status, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +
@@ -28,7 +32,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "from Item as i " +
             "where i.owner.id = :userId) " +
             "order by b.start desc ")
-    List<Booking> findAllByOwnerIdOrderByStartDesc(@Param("userId") long userId);
+    List<Booking> findAllByOwnerIdOrderByStartDesc(@Param("userId") long userId, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +
@@ -39,7 +43,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.end < :end " +
             "order by b.start desc ")
     List<Booking> findAllByOwnerIdAndEndBeforeOrderByStartDesc(
-            @Param("userId")long userId, @Param("end")LocalDateTime end);
+            @Param("userId")long userId, @Param("end")LocalDateTime end, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +
@@ -50,7 +54,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.start < :start and b.end > :end " +
             "order by b.start desc ")
     List<Booking> findAllByOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
-            @Param("userId") long userId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+            @Param("userId") long userId, @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +
@@ -61,7 +66,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.start > :start " +
             "order by b.start desc ")
     List<Booking> findAllByOwnerIdAndStartAfterOrderByStartDesc(
-            @Param("userId") long userId, @Param("start") LocalDateTime start);
+            @Param("userId") long userId, @Param("start") LocalDateTime start, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +
@@ -72,7 +77,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.status = ?2 " +
             "order by b.start desc ")
     List<Booking> findAllByOwnerIdAndStatusOrderByStartDesc(
-            @Param("userId") long userId, @Param("status") Status status);
+            @Param("userId") long userId, @Param("status") Status status, Pageable pageable);
 
     Optional<Booking> findFirstByItemIdAndStatusAndStartBeforeOrderByStartDescItemIdDesc(
             long id, Status status, LocalDateTime start);

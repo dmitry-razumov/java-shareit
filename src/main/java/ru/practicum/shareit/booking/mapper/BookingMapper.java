@@ -4,7 +4,6 @@ import org.mapstruct.Mapper;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
-
 import java.util.List;
 
 @Mapper(componentModel = "spring")

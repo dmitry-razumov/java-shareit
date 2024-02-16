@@ -10,12 +10,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.checkerframework.checker.index.qual.Positive;
+import org.springframework.context.annotation.ComponentScan;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
+@Validated
+@ComponentScan(basePackageClasses = ItemMapper.class)
 public class ItemController {
     private final ItemService service;
     private final ItemMapper mapper;
@@ -25,7 +30,7 @@ public class ItemController {
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") long userId,
                           @Validated(CreateItem.class) @RequestBody ItemDto itemDto) {
         log.info("POST /items with body {} and X-Sharer-User-Id={} ", itemDto, userId);
-        return mapper.toItemDto(service.create(mapper.toItem(itemDto), userId));
+        return mapper.toItemDto(service.create(mapper.toItem(itemDto), userId, itemDto.getRequestId()));
     }
 
     @PatchMapping("/{id}")
@@ -40,9 +45,12 @@ public class ItemController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") long ownerId) {
-        log.info("GET /items with X-Sharer-User-Id={} ", ownerId);
-        return mapper.toItemDto(service.getItemsByOwnerId(ownerId));
+    public List<ItemDto> getItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") long ownerId,
+                                           @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                           @RequestParam(defaultValue = "20") @Positive int size) {
+        log.info("GET /items/?from={{}}&size={{}} X-Sharer-User-Id={}",
+                from, size, ownerId);
+        return mapper.toItemDto(service.getItemsByOwnerId(ownerId, from, size));
     }
 
     @GetMapping("/{id}")
@@ -55,9 +63,11 @@ public class ItemController {
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getByNameOrDescription(@RequestParam String text) {
-        log.info("GET /items/search?text={}", text);
-        return mapper.toItemDto(service.getItemsByNameOrDescription(text));
+    public List<ItemDto> getByNameOrDescription(@RequestParam String text,
+                                                @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                @RequestParam(defaultValue = "20") @Positive int size) {
+        log.info("GET /items/search?text={{}}&from={{}}&size={{}}", text, from, size);
+        return mapper.toItemDto(service.getItemsByNameOrDescription(text, from, size));
     }
 
     @PostMapping("/{itemId}/comment")

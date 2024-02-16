@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import org.springframework.context.annotation.ComponentScan;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.interfaces.CreateUser;
 import ru.practicum.shareit.user.interfaces.UpdateUser;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
+@ComponentScan(basePackageClasses = UserMapper.class)
 public class UserController {
     private final UserService service;
     private final UserMapper mapper;
