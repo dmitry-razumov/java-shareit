@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,16 +19,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(controllers = UserController.class)
 public class UserControllerTest {
     @Autowired
     ObjectMapper mapper;
     @Autowired
     MockMvc mockMvc;
-
     @MockBean
     UserService userService;
+    private UserDto userDto;
+    private User user;
 
     static User createUser() {
         return User.builder()
@@ -46,11 +46,14 @@ public class UserControllerTest {
                 .build();
     }
 
+    @BeforeEach
+    void beforeEach() {
+        userDto = createDto();
+        user = createUser();
+    }
+
     @Test
-    @SneakyThrows
-    void shouldCreateUser() {
-        UserDto userDto = createDto();
-        User user = createUser();
+    void shouldCreateUser() throws Exception {
         when(userService.create(any()))
                 .thenReturn(user);
         String json = mapper.writeValueAsString(userDto);
@@ -64,10 +67,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldUpdateUser() {
-        UserDto userDto = createDto();
-        User user = createUser();
+    void shouldUpdateUser() throws Exception {
         when(userService.update(any()))
                 .thenReturn(user);
         String json = mapper.writeValueAsString(userDto);
@@ -83,16 +83,13 @@ public class UserControllerTest {
 
     @Test
     void shouldDeleteUser() {
-        User user = createUser();
         userService.create(user);
         userService.delete(user.getId());
         verify(userService, times(1)).delete(user.getId());
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetUserById() {
-        User user = createUser();
+    void shouldGetUserById() throws Exception {
         when(userService.getById(anyLong()))
                 .thenReturn(user);
         mockMvc.perform(get("/users/1")
@@ -104,9 +101,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetAllUsers() {
-        User user = createUser();
+    void shouldGetAllUsers() throws Exception {
         when(userService.getAll())
                 .thenReturn(List.of(user));
         mockMvc.perform(get("/users")

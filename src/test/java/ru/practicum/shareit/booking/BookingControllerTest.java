@@ -1,7 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,9 +30,11 @@ public class BookingControllerTest {
     ObjectMapper mapper;
     @Autowired
     MockMvc mockMvc;
-
     @MockBean
     BookingService bookingService;
+    private Booking booking;
+    private BookingRequestDto requestDto;
+    private List<Booking> bookings;
 
     static BookingRequestDto createBookingRequest() {
         return BookingRequestDto.builder()
@@ -70,11 +72,15 @@ public class BookingControllerTest {
                 .build();
     }
 
+    @BeforeEach
+    void beforeEach() {
+        booking = createBooking();
+        requestDto = createBookingRequest();
+        bookings = List.of(booking);
+    }
+
     @Test
-    @SneakyThrows
-    void shouldCreateBooking() {
-        Booking booking = createBooking();
-        BookingRequestDto requestDto = createBookingRequest();
+    void shouldCreateBooking() throws Exception {
         when(bookingService.createBooking(any(), anyLong(), anyLong()))
                 .thenReturn(booking);
         String json = mapper.writeValueAsString(requestDto);
@@ -96,10 +102,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotCreateBookingWithoutUserId() {
-        Booking booking = createBooking();
-        BookingRequestDto requestDto = createBookingRequest();
+    void shouldNotCreateBookingWithoutUserId() throws Exception {
         when(bookingService.createBooking(any(), anyLong(), anyLong()))
                 .thenReturn(booking);
         String json = mapper.writeValueAsString(requestDto);
@@ -111,9 +114,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetBookingById() {
-        Booking booking = createBooking();
+    void shouldGetBookingById() throws Exception {
         when(bookingService.getById(anyLong(), anyLong()))
                 .thenReturn(booking);
         mockMvc.perform(get("/bookings/1")
@@ -132,9 +133,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotGetBookingByIdWithNullPath() {
-        Booking booking = createBooking();
+    void shouldNotGetBookingByIdWithNullPath() throws Exception {
         when(bookingService.getById(anyLong(), anyLong()))
                 .thenReturn(booking);
         mockMvc.perform(get("/bookings/null")
@@ -145,9 +144,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldApproveBooking() {
-        Booking booking = createBooking();
+    void shouldApproveBooking() throws Exception {
         when(bookingService.updateStatus(anyLong(), anyLong(), anyBoolean()))
                 .thenReturn(booking);
         mockMvc.perform(patch("/bookings/1")
@@ -167,9 +164,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotApproveBookingWithoutUserId() {
-        Booking booking = createBooking();
+    void shouldNotApproveBookingWithoutUserId() throws Exception {
         when(bookingService.updateStatus(anyLong(), anyLong(), anyBoolean()))
                 .thenReturn(booking);
         mockMvc.perform(patch("/bookings/1")
@@ -180,9 +175,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetAllBookings() {
-        List<Booking> bookings = List.of(createBooking());
+    void shouldGetAllBookings() throws Exception {
         when(bookingService.getAllByUser(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(bookings);
         mockMvc.perform(get("/bookings")
@@ -196,9 +189,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotGetAllBookingsWithoutUserId() {
-        List<Booking> bookings = List.of(createBooking());
+    void shouldNotGetAllBookingsWithoutUserId() throws Exception {
         when(bookingService.getAllByUser(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(bookings);
         mockMvc.perform(get("/bookings")
@@ -209,9 +200,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetAllBookingsByOwnerItems() {
-        List<Booking> bookings = List.of(createBooking());
+    void shouldGetAllBookingsByOwnerItems() throws Exception {
         when(bookingService.getAllByOwnerItems(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(bookings);
         mockMvc.perform(get("/bookings/owner")
@@ -225,9 +214,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotGetAllBookingsByOwnerItemsWithoutUserId() {
-        List<Booking> bookings = List.of(createBooking());
+    void shouldNotGetAllBookingsByOwnerItemsWithoutUserId() throws Exception {
         when(bookingService.getAllByOwnerItems(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(bookings);
         mockMvc.perform(get("/bookings/owner")

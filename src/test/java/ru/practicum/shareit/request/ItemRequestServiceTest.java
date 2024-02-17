@@ -28,16 +28,12 @@ public class ItemRequestServiceTest {
     ItemRequestRepository itemRequestRepository;
     @MockBean
     UserRepository userRepository;
-
     @Autowired
     ItemRequestService itemRequestService;
-
     private ItemRequest itemRequest1;
     private ItemRequest itemRequest2;
     private ItemRequest itemRequest3;
-    private LocalDateTime created1;
     private User requester1;
-    private User requester2;
 
     @BeforeEach
     void beforeEach() {
@@ -46,13 +42,13 @@ public class ItemRequestServiceTest {
                 .name("userName1")
                 .email("user1@mail.com")
                 .build();
-        requester2 = User.builder()
+        User requester2 = User.builder()
                 .id(2L)
                 .name("userName2")
                 .email("user2@mail.com")
                 .build();
 
-        created1 = LocalDateTime.now();
+        LocalDateTime created1 = LocalDateTime.now();
 
         itemRequest1 = ItemRequest.builder()
                 .id(1L)

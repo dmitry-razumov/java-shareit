@@ -2,9 +2,7 @@ package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -12,6 +10,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.utils.PageRequestCustom;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequest> getAll(long userId, int from, int size) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id=" + userId + " не найден"));
-        Pageable page = PageRequest.of(from / size, size, Sort.by("created"));
+        Pageable page = PageRequestCustom.get(from, size, "created");
         List<ItemRequest> itemRequestList = itemRequestRepository.findAllByRequesterIdNot(userId, page);
         log.info("получена page from={} size={} с запросами других пользователей - {} для пользователя с id={}",
                 from / size, size, itemRequestList, userId);

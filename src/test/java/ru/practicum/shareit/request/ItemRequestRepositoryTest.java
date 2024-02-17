@@ -21,7 +21,6 @@ public class ItemRequestRepositoryTest {
     TestEntityManager em;
     @Autowired
     ItemRequestRepository itemRequestRepository;
-
     private User owner;
     private User requester;
     private ItemRequest itemRequest;

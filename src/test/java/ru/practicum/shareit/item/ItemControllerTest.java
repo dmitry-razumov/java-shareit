@@ -1,8 +1,8 @@
 package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -34,11 +34,17 @@ public class ItemControllerTest {
     ObjectMapper mapper;
     @Autowired
     MockMvc mockMvc;
-
     @MockBean
     ItemService itemService;
     @MockBean
     CommentRepository commentRepository;
+    private User owner;
+    private Item item;
+    private ItemDto itemDto;
+    private List<Item> items;
+    private User author;
+    private Comment comment;
+    private CommentDto commentDto;
 
     static ItemDto createItemDto() {
         return ItemDto.builder()
@@ -87,12 +93,19 @@ public class ItemControllerTest {
                 .build();
     }
 
+    @BeforeEach
+    void beforeEach() {
+        owner = createOwner();
+        item = createItem(owner);
+        itemDto = createItemDto();
+        items = List.of(createItem(owner));
+        author = createOwner();
+        comment = createComment(author, createItem(author));
+        commentDto = createCommentDto();
+    }
+
     @Test
-    @SneakyThrows
-    void shouldCreateItem() {
-        User owner = createOwner();
-        Item item = createItem(owner);
-        ItemDto itemDto = createItemDto();
+    void shouldCreateItem() throws Exception {
         when(itemService.create(any(), anyLong(),anyLong()))
                 .thenReturn(item);
         String json = mapper.writeValueAsString(itemDto);
@@ -110,11 +123,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotCreateItemWithoutUserId() {
-        User owner = createOwner();
-        Item item = createItem(owner);
-        ItemDto itemDto = createItemDto();
+    void shouldNotCreateItemWithoutUserId() throws Exception {
         when(itemService.create(any(), anyLong(), anyLong()))
                 .thenReturn(item);
         String json = mapper.writeValueAsString(itemDto);
@@ -126,10 +135,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetItemById() {
-        User owner = createOwner();
-        Item item = createItem(owner);
+    void shouldGetItemById() throws Exception {
         when(itemService.getById(anyLong(), anyLong()))
                 .thenReturn(item);
         mockMvc.perform(get("/items/1")
@@ -145,10 +151,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotGetItemByIdWithNullPath() {
-        User owner = createOwner();
-        Item item = createItem(owner);
+    void shouldNotGetItemByIdWithNullPath() throws Exception {
         when(itemService.getById(anyLong(), anyLong()))
                 .thenReturn(item);
         mockMvc.perform(get("/items/null")
@@ -160,11 +163,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldUpdateItem() {
-        User owner = createOwner();
-        Item item = createItem(owner);
-        ItemDto itemDto = createItemDto();
+    void shouldUpdateItem() throws Exception {
         when(itemService.update(any(), anyLong()))
                 .thenReturn(item);
         String json = mapper.writeValueAsString(itemDto);
@@ -183,11 +182,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotUpdateItemWithoutUserId() {
-        User owner = createOwner();
-        Item item = createItem(owner);
-        ItemDto itemDto = createItemDto();
+    void shouldNotUpdateItemWithoutUserId() throws Exception {
         when(itemService.update(any(), anyLong()))
                 .thenReturn(item);
         String json = mapper.writeValueAsString(itemDto);
@@ -200,10 +195,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetOwnersItems() {
-        User owner = createOwner();
-        List<Item> items = List.of(createItem(owner));
+    void shouldGetOwnersItems() throws Exception {
         when(itemService.getItemsByOwnerId(anyLong(), anyInt(), anyInt()))
                 .thenReturn(items);
         mockMvc.perform(get("/items")
@@ -215,10 +207,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotGetOwnersItemsWithoutUserId() {
-        User owner = createOwner();
-        List<Item> items = List.of(createItem(owner));
+    void shouldNotGetOwnersItemsWithoutUserId() throws Exception {
         when(itemService.getItemsByOwnerId(anyLong(), anyInt(), anyInt()))
                 .thenReturn(items);
         mockMvc.perform(get("/items")
@@ -228,10 +217,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldFindItemByNameOrDescription() {
-        User owner = createOwner();
-        List<Item> items = List.of(createItem(owner));
+    void shouldFindItemByNameOrDescription() throws Exception {
         when(itemService.getItemsByNameOrDescription(anyString(), anyInt(), anyInt()))
                 .thenReturn(items);
         mockMvc.perform(get("/items/search")
@@ -243,10 +229,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotFindItemByNameOrDescriptionWithoutText() {
-        User owner = createOwner();
-        List<Item> items = List.of(createItem(owner));
+    void shouldNotFindItemByNameOrDescriptionWithoutText() throws Exception {
         when(itemService.getItemsByNameOrDescription(anyString(), anyInt(), anyInt()))
                 .thenReturn(items);
         mockMvc.perform(get("/items/search")
@@ -256,12 +239,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldAddComment() {
-        User author = createOwner();
-        Item item = createItem(author);
-        Comment comment = createComment(author, item);
-        CommentDto commentDto = createCommentDto();
+    void shouldAddComment() throws Exception {
         when(itemService.addComment(anyLong(), anyLong(), any()))
                 .thenReturn(comment);
         String json = mapper.writeValueAsString(commentDto);
@@ -276,12 +254,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotAddCommentWithoutUserId() {
-        User author = createOwner();
-        Item item = createItem(author);
-        Comment comment = createComment(author, item);
-        CommentDto commentDto = createCommentDto();
+    void shouldNotAddCommentWithoutUserId() throws Exception {
         when(itemService.addComment(anyLong(), anyLong(), any()))
                 .thenReturn(comment);
         String json = mapper.writeValueAsString(commentDto);

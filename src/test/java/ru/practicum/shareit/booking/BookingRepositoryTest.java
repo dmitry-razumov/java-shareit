@@ -22,7 +22,6 @@ public class BookingRepositoryTest {
     TestEntityManager em;
     @Autowired
     BookingRepository bookingRepository;
-
     private User owner;
     private User booker;
     private Item item;
@@ -54,7 +53,7 @@ public class BookingRepositoryTest {
     static Booking createBooking(Item item, User booker) {
         return Booking.builder()
                 .status(Status.WAITING)
-                .start(LocalDateTime.now())
+                .start(LocalDateTime.now().plusHours(1))
                 .end(LocalDateTime.now().plusDays(1))
                 .item(item)
                 .booker(booker)
@@ -89,7 +88,7 @@ public class BookingRepositoryTest {
     @Test
     void shouldFindAllByBookerIdAndStartBeforeAndEndAfter() {
         List<Booking> bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByEndDesc(
-                booker.getId(), LocalDateTime.now().plusHours(1), LocalDateTime.now().plusHours(2),
+                booker.getId(), LocalDateTime.now().plusHours(2), LocalDateTime.now().plusHours(3),
                 PageRequest.of(0,20));
         assertThat(bookings.size(), equalTo(1));
         assertThat(bookings.get(0), equalTo(booking));
@@ -98,7 +97,7 @@ public class BookingRepositoryTest {
     @Test
     void shouldFindNoneAllByBookerIdAndStartBeforeAndEndAfterByNoExistBookerId() {
         List<Booking> emptyList = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByEndDesc(
-                99L, LocalDateTime.now().plusHours(1), LocalDateTime.now().plusHours(2),
+                99L, LocalDateTime.now().plusHours(2), LocalDateTime.now().plusHours(3),
                 PageRequest.of(0,20));
         assertThat(emptyList.size(), equalTo(0));
     }
@@ -182,7 +181,7 @@ public class BookingRepositoryTest {
     @Test
     void shouldFindAllByOwnerIdAndStartBeforeAndEndAfter() {
         List<Booking> bookings = bookingRepository.findAllByOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
-                owner.getId(), LocalDateTime.now().plusMinutes(1), LocalDateTime.now().plusMinutes(2),
+                owner.getId(), LocalDateTime.now().plusMinutes(61), LocalDateTime.now().plusMinutes(62),
                 PageRequest.of(0,20));
         assertThat(bookings.size(), equalTo(1));
         assertThat(bookings.get(0), equalTo(booking));
@@ -191,7 +190,7 @@ public class BookingRepositoryTest {
     @Test
     void shouldFindNoneAllByOwnerIdAndStartBeforeAndEndAfterByNoExistOwnerId() {
         List<Booking> emptyList = bookingRepository.findAllByOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
-                99L, LocalDateTime.now().plusMinutes(1), LocalDateTime.now().plusMinutes(2),
+                99L, LocalDateTime.now().plusMinutes(61), LocalDateTime.now().plusMinutes(62),
                 PageRequest.of(0,20));
         assertThat(emptyList.size(), equalTo(0));
     }

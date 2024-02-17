@@ -19,7 +19,6 @@ public class ItemRepositoryTest {
     TestEntityManager em;
     @Autowired
     ItemRepository itemRepository;
-
     private User owner;
     private Item item;
 

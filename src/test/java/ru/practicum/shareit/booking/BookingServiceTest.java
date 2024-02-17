@@ -1,10 +1,10 @@
 package ru.practicum.shareit.booking;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
@@ -17,6 +17,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.utils.PageRequestCustom;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -35,9 +36,11 @@ public class BookingServiceTest {
     UserRepository userRepository;
     @MockBean
     ItemRepository itemRepository;
-
     @Autowired
     BookingService bookingService;
+    private Booking booking;
+    private User booker;
+    private Item item;
 
     static Booking createBooking() {
         User booker = User.builder()
@@ -67,11 +70,15 @@ public class BookingServiceTest {
                 .build();
     }
 
+    @BeforeEach
+    void beforeEach() {
+        booking = createBooking();
+        booker = booking.getBooker();
+        item = booking.getItem();
+    }
+
     @Test
     void shouldCreateBooking() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         when(bookingRepository.save(any()))
                 .thenAnswer(invocationOnMock -> {
                     Booking newBooking = invocationOnMock.getArgument(0);
@@ -95,9 +102,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotCreateBookingWithoutUser() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
         NotFoundException exception = assertThrows(NotFoundException.class,
@@ -107,9 +111,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotCreateBookingWithoutItem() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
         when(itemRepository.findById(anyLong()))
@@ -121,9 +122,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotCreateBookingWithWrongDateTime() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         booking.setStart(booking.getEnd().plusMinutes(1));
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
@@ -136,9 +134,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotCreateBookingWithUnavailableItem() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         item.setAvailable(false);
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
@@ -151,9 +146,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotCreateBookingByEqualUserAndBookerId() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         item.getOwner().setId(booker.getId());
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
@@ -166,9 +158,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldApproveBooking() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         item.getOwner().setId(booker.getId());
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
@@ -180,9 +169,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldRejectBooking() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         item.getOwner().setId(booker.getId());
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
@@ -194,9 +180,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotApproveBookingWithoutBookingEntity() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         item.getOwner().setId(booker.getId());
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
@@ -209,8 +192,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotApproveBookingByNotItemOwner() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
         when(bookingRepository.findById(anyLong()))
@@ -222,9 +203,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotApproveBookingWhenStatusApproved() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         item.getOwner().setId(booker.getId());
         booking.setStatus(Status.APPROVED);
         when(userRepository.findById(anyLong()))
@@ -238,9 +216,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotApproveBookingWhenStatusRejected() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
         item.getOwner().setId(booker.getId());
         booking.setStatus(Status.REJECTED);
         when(userRepository.findById(anyLong()))
@@ -254,8 +229,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldGetBookingById() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
         when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booking));
         when(userRepository.findById(anyLong()))
@@ -266,8 +239,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotGetBookingWithoutBookingEntity() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
         when(bookingRepository.findById(anyLong()))
@@ -279,8 +250,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotGetBookingWithoutBooker() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
         when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booking));
         when(userRepository.findById(anyLong()))
@@ -292,7 +261,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldNotGetBookingWhenUserIdNotEqualBookerId() {
-        Booking booking = createBooking();
         User user = User.builder()
                 .id(3L)
                 .name("user")
@@ -310,9 +278,7 @@ public class BookingServiceTest {
 
     @Test
     void shouldGetAllBookingsByStatuses() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Pageable page = PageRequest.of(0, 3);
+        Pageable page = PageRequestCustom.get(0, 3);
         List<Booking> bookings = List.of(booking);
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
@@ -345,8 +311,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldExceptionForGetAllBookingsWhenUnsupportedStatus() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
         UnsupportedException exception = assertThrows(UnsupportedException.class, () ->
@@ -356,9 +320,7 @@ public class BookingServiceTest {
 
     @Test
     void shouldGetAllBookingsByOwnerIdByStatutes() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        PageRequest page = PageRequest.of(0, 3);
+        Pageable page = PageRequestCustom.get(0, 3);
         List<Booking> bookings = List.of(booking);
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
@@ -391,8 +353,6 @@ public class BookingServiceTest {
 
     @Test
     void shouldExceptionByGetAllBookingsByOwnerIdByUnsupportedStatus() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booker));
         UnsupportedException exception = assertThrows(UnsupportedException.class, () ->

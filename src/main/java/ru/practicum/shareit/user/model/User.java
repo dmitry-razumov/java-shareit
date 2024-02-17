@@ -18,9 +18,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotBlank
+    @NotBlank(message = "name не должно быть пробелом, пустым или null")
     private String name;
-    @Email
+    @Email(message = "недопустимый формат email")
+    @NotBlank(message = "email не должно быть пробелом, пустым или null")
     @Column(unique = true)
     private String email;
 }

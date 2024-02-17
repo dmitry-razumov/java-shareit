@@ -20,9 +20,6 @@ public class CommentRepositoryTest {
     TestEntityManager em;
     @Autowired
     CommentRepository commentRepository;
-
-    private User owner;
-    private User booker;
     private Item item;
     private Comment comment;
 
@@ -60,8 +57,8 @@ public class CommentRepositoryTest {
 
     @BeforeEach
     void beforeEach() {
-        owner = createOwner();
-        booker = createBooker();
+        User owner = createOwner();
+        User booker = createBooker();
         item = createItem(owner);
         comment = createComment(booker, item);
         em.persist(owner);

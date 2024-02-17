@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @Builder
 public class BookingRequestDto {
     private long itemId;
-    @NotNull
+    @NotNull(message = "Дата начала аренды не должна быть null")
     @FutureOrPresent (message = "Дата начала аренды должна быть не ранее сегодня")
     private LocalDateTime start;
-    @NotNull
+    @NotNull(message = "Дата конца аренды не должна быть null")
     @Future (message = "Дата конца аренды должна быть позднее сегодня")
     private LocalDateTime end;
 }

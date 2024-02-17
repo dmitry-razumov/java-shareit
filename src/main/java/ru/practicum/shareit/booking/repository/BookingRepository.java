@@ -73,8 +73,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "where b.item.id in (" +
             "select i.id " +
             "from Item as i " +
-            "where i.owner.id = ?1) " +
-            "and b.status = ?2 " +
+            "where i.owner.id = :userId) " +
+            "and b.status = :status " +
             "order by b.start desc ")
     List<Booking> findAllByOwnerIdAndStatusOrderByStartDesc(
             @Param("userId") long userId, @Param("status") Status status, Pageable pageable);

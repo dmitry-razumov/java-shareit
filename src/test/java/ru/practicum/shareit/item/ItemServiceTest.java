@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,9 +39,15 @@ public class ItemServiceTest {
     BookingRepository bookingRepository;
     @MockBean
     CommentRepository commentRepository;
-
     @Autowired
     ItemService itemService;
+    private User owner;
+    private Item item;
+    private User booker;
+    private Booking booking;
+    private Comment comment;
+    private Booking lastBooking;
+
 
     static User createOwner() {
         return User.builder()
@@ -102,10 +109,18 @@ public class ItemServiceTest {
                 .build();
     }
 
+    @BeforeEach
+    void beforeEach() {
+        owner = createOwner();
+        item = createItem(owner);
+        booker = createBooker();
+        booking = createBooking(booker, item);
+        comment = createComment(booker, item);
+        lastBooking = createLastBooking(owner, LocalDateTime.now(), item);
+    }
+
     @Test
     void shouldCreateItemWithoutRequestId() {
-        User owner = createOwner();
-        Item item = createItem(owner);
         item.setRequest(null);
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
@@ -127,8 +142,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldCreateItemWithRequestId() {
-        User owner = createOwner();
-        Item item = createItem(owner);
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(ItemRequest.builder().id(1).build()));
@@ -150,8 +163,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldThrowOnCreateItemWhenRequestNotFound() {
-        User owner = createOwner();
-
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -196,8 +207,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldUpdateItem() {
-        User owner = createOwner();
-        Item item = createItem(owner);
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
         Item result = itemService.update(item, owner.getId());
@@ -207,8 +216,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldThrowOnUpdateItemWithoutOwnerEntity() {
-        User owner = createOwner();
-        Item item = createItem(owner);
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
         NotFoundException exception = assertThrows(NotFoundException.class,
@@ -218,8 +225,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldThrowOnUpdateItemWithWrongOwnerId() {
-        User owner = createOwner();
-        Item item = createItem(owner);
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
         NotFoundException exception = assertThrows(NotFoundException.class,
@@ -229,17 +234,14 @@ public class ItemServiceTest {
 
     @Test
     void shouldDeleteItem() {
-        Item item = createItem(createOwner());
         itemRepository.save(item);
         itemRepository.deleteById(item.getId());
         assertThat(itemRepository.existsById(item.getId()), equalTo(false));
         verify(itemRepository, times(1)).deleteById(item.getId());
     }
-    //*
 
     @Test
     void shouldGetAllItemsByOwner() {
-        User owner = createOwner();
         Item item1 = createItem(owner);
         Item item2 = createItem(owner);
         item2.setId(2L);
@@ -253,11 +255,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldGetItemById() {
-        User owner = createOwner();
-        User booker = createBooker();
-        Item item = createItem(owner);
-        Booking booking = createBooking(booker, item);
-        Comment comment = createComment(booker, item);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
         when(bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDescItemIdDesc(anyLong(), any(), any()))
                 .thenReturn(Optional.of(booking));
@@ -273,8 +270,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldThrownOnGetItemWithoutItemEntity() {
-        User owner = createOwner();
-        Item item = createItem(owner);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
@@ -285,8 +280,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldGetItemByNameOrDescription() {
-        User owner = createOwner();
-        Item item = createItem(owner);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
         when(itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailable(
                 anyString(), anyString(), anyBoolean(), any()))
@@ -297,8 +290,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldGetNoneItemByNameOrDescriptionWithoutText() {
-        User owner = createOwner();
-        Item item = createItem(owner);
         itemRepository.save(item);
         List<Item> result = itemService.getItemsByNameOrDescription("", 0, 20);
         assertThat(result.size(), equalTo(0));
@@ -306,11 +297,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldCreateCommentForItem() {
-        User owner = createOwner();
-        User booker = createBooker();
-        Item item = createItem(owner);
-        Booking booking = createBooking(booker, item);
-        Comment comment = createComment(booker, item);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(ItemRequest.builder().id(1).build()));
         when(itemRepository.findById(any())).thenReturn(Optional.of(item));
@@ -331,11 +317,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldThrowOnCreateCommentForItemWhenNoItem() {
-        User booker = createBooker();
-        User owner = createOwner();
-        Item item = createItem(owner);
-        LocalDateTime created = LocalDateTime.now();
-        Booking lastBooking = createLastBooking(owner, created, item);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         when(bookingRepository.findAllByBookerIdAndItemIdAndEndBefore(anyLong(), anyLong(), any()))
                 .thenReturn(List.of(lastBooking));
@@ -351,10 +332,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldThrownOnAddCommentWithoutUserBookings() {
-        User owner = createOwner();
-        User booker = createBooker();
-        Item item = createItem(owner);
-        Comment comment = createComment(booker, item);
         when(bookingRepository.findAllByBookerIdAndItemIdAndEndBefore(anyLong(), anyLong(), any()))
                 .thenReturn(Collections.emptyList());
         ValidationException exception = assertThrows(ValidationException.class,
@@ -364,11 +341,6 @@ public class ItemServiceTest {
 
     @Test
     void shouldThrownOnAddCommentWithoutUserEntity() {
-        User owner = createOwner();
-        User booker = createBooker();
-        Item item = createItem(owner);
-        Booking booking = createBooking(booker, item);
-        Comment comment = createComment(booker, item);
         when(bookingRepository.findAllByBookerIdAndItemIdAndEndBefore(anyLong(), anyLong(), any()))
                 .thenReturn(List.of(booking));
         when(userRepository.findById(anyLong()))

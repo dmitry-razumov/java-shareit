@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +16,8 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.UnsupportedException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.utils.PageRequestCustom;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -100,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> getAllByUser(long userId, String state, int from, int size) {
         User booker = findUserByIdOrThrow(userId);
         LocalDateTime currentTime = LocalDateTime.now();
-        Pageable page = PageRequest.of(from / size, size);
+        Pageable page = PageRequestCustom.get(from, size);
         List<Booking> listBooking;
         switch (getState(state)) {
             case ALL:
@@ -139,7 +140,7 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> getAllByOwnerItems(long userId, String state, int from, int size) {
         User owner = findUserByIdOrThrow(userId);
         LocalDateTime currentTime = LocalDateTime.now();
-        Pageable page = PageRequest.of(from / size, size);
+        Pageable page = PageRequestCustom.get(from, size);
         List<Booking> listBooking;
         switch (getState(state)) {
             case ALL:

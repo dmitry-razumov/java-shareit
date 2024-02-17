@@ -19,12 +19,13 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotBlank
+    @NotBlank(message = "name не должно быть пробелом, пустым или null")
     private String name;
-    @NotBlank
+    @NotBlank(message = "description не должно быть пробелом, пустым или null")
     private String description;
+    @NotNull(message = "available не должно быть null")
     private Boolean available;
-    @NotNull
+    @NotNull(message = "owner не должен быть null")
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;

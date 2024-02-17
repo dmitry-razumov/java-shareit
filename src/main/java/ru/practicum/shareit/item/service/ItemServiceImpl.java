@@ -12,11 +12,11 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.utils.PageRequestCustom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Item> getItemsByOwnerId(long ownerId, int from, int size) {
         User user = findUserByIdOrThrow(ownerId);
-        Pageable page = PageRequest.of(from / size, size);
+        Pageable page = PageRequestCustom.get(from, size);
         List<Item> itemList = itemRepository.findAllByOwnerIdOrderById(ownerId, page);
         List<Long> itemIds = itemList.stream()
                 .map(item -> item.getId()).collect(Collectors.toList());
@@ -150,7 +150,7 @@ public class ItemServiceImpl implements ItemService {
             log.info("вещей для nameOrdescription={} нет", text);
             return Collections.emptyList();
         }
-        Pageable page = PageRequest.of(from / size, size);
+        Pageable page = PageRequestCustom.get(from, size);
         List<Item> itemList = itemRepository
                 .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailable(
                         text,text,true, page);

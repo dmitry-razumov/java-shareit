@@ -1,7 +1,7 @@
 package ru.practicum.shareit.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,9 +30,11 @@ public class ItemRequestControllerTest {
     ObjectMapper mapper;
     @Autowired
     MockMvc mockMvc;
-
     @MockBean
     ItemRequestService itemRequestService;
+    private User requester;
+    private ItemRequest itemRequest;
+    private ItemRequestDto itemRequestDto;
 
     static User createOwner() {
         return User.builder()
@@ -80,14 +82,17 @@ public class ItemRequestControllerTest {
                 .build();
     }
 
-    @Test
-    @SneakyThrows
-    void shouldCreateRequest() {
+    @BeforeEach
+    void beforeEach() {
         User owner = createOwner();
-        User requester = createRequester();
+        requester = createRequester();
         Item item = createItem(owner);
-        ItemRequest itemRequest = createRequest(requester, item);
-        ItemRequestDto itemRequestDto = createDto();
+        itemRequest = createRequest(requester, item);
+        itemRequestDto = createDto();
+    }
+
+    @Test
+    void shouldCreateRequest() throws Exception {
         when(itemRequestService.create(any(), anyLong()))
                 .thenReturn(itemRequest);
         String json = mapper.writeValueAsString(itemRequestDto);
@@ -101,13 +106,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotCreateRequestWithoutUserId() {
-        User owner = createOwner();
-        User requester = createRequester();
-        Item item = createItem(owner);
-        ItemRequest itemRequest = createRequest(requester, item);
-        ItemRequestDto itemRequestDto = createDto();
+    void shouldNotCreateRequestWithoutUserId() throws Exception {
         when(itemRequestService.create(any(), anyLong()))
                 .thenReturn(itemRequest);
         String json = mapper.writeValueAsString(itemRequestDto);
@@ -119,12 +118,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetAllOwnerRequests() {
-        User owner = createOwner();
-        User requester = createRequester();
-        Item item = createItem(owner);
-        ItemRequest itemRequest = createRequest(requester, item);
+    void shouldGetAllOwnerRequests() throws Exception {
         when(itemRequestService.getAllByRequesterId(anyLong()))
                 .thenReturn(List.of(itemRequest));
         mockMvc.perform(get("/requests")
@@ -137,12 +131,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotGetAllOwnerRequestsWithoutUserId() {
-        User owner = createOwner();
-        User requester = createRequester();
-        Item item = createItem(owner);
-        ItemRequest itemRequest = createRequest(requester, item);
+    void shouldNotGetAllOwnerRequestsWithoutUserId() throws Exception {
         when(itemRequestService.getAllByRequesterId(anyLong()))
                 .thenReturn(List.of(itemRequest));
         mockMvc.perform(get("/requests")
@@ -152,12 +141,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetAllRequests() {
-        User owner = createOwner();
-        User requester = createRequester();
-        Item item = createItem(owner);
-        ItemRequest itemRequest = createRequest(requester, item);
+    void shouldGetAllRequests() throws Exception {
         when(itemRequestService.getAll(anyLong(), anyInt(), anyInt()))
                 .thenReturn(List.of(itemRequest));
         mockMvc.perform(get("/requests/all")
@@ -172,12 +156,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotGetAllRequestsWithoutUserId() {
-        User owner = createOwner();
-        User requester = createRequester();
-        Item item = createItem(owner);
-        ItemRequest itemRequest = createRequest(requester, item);
+    void shouldNotGetAllRequestsWithoutUserId() throws Exception {
         when(itemRequestService.getAll(anyLong(), anyInt(), anyInt()))
                 .thenReturn(List.of(itemRequest));
         mockMvc.perform(get("/requests/all")
@@ -189,12 +168,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldGetRequestById() {
-        User owner = createOwner();
-        User requester = createRequester();
-        Item item = createItem(owner);
-        ItemRequest itemRequest = createRequest(requester, item);
+    void shouldGetRequestById() throws Exception {
         when(itemRequestService.getById(anyLong(), anyLong()))
                 .thenReturn(itemRequest);
         mockMvc.perform(get("/requests/1")
@@ -206,12 +180,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldNotGetRequestByIdWithoutUserId() {
-        User owner = createOwner();
-        User requester = createRequester();
-        Item item = createItem(owner);
-        ItemRequest itemRequest = createRequest(requester, item);
+    void shouldNotGetRequestByIdWithoutUserId() throws Exception {
         when(itemRequestService.getById(anyLong(), anyLong()))
                 .thenReturn(itemRequest);
         mockMvc.perform(get("/requests/1")

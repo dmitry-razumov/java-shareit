@@ -25,7 +25,7 @@ public class ItemRequestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    ItemRequestDto create(@RequestHeader(name = "X-Sharer-User-Id") long userId,
+    public ItemRequestDto create(@RequestHeader(name = "X-Sharer-User-Id") long userId,
                           @Validated @RequestBody ItemRequestDto itemRequestDto) {
         log.info("POST /requests with body {} and X-Sharer-User-Id={}",
                 itemRequestDto, userId);
@@ -34,14 +34,14 @@ public class ItemRequestController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    List<ItemRequestDto> getAllByRequesterId(@RequestHeader(name = "X-Sharer-User-Id") long requesterId) {
+    public List<ItemRequestDto> getAllByRequesterId(@RequestHeader(name = "X-Sharer-User-Id") long requesterId) {
         log.info("GET /requests X-Sharer-User-Id={}", requesterId);
         return mapper.toItemRequestDto(service.getAllByRequesterId(requesterId));
     }
 
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    List<ItemRequestDto> getAll(@RequestHeader(name = "X-Sharer-User-Id") long userId,
+    public List<ItemRequestDto> getAll(@RequestHeader(name = "X-Sharer-User-Id") long userId,
                                 @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                 @RequestParam(defaultValue = "20") @Positive int size) {
         log.info("GET /requests/all?from={{}}&size={{}} X-Sharer-User-Id={}",
@@ -51,7 +51,7 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     @ResponseStatus(HttpStatus.OK)
-    ItemRequestDto getById(@RequestHeader(name = "X-Sharer-User-Id") long userId,
+    public ItemRequestDto getById(@RequestHeader(name = "X-Sharer-User-Id") long userId,
                                 @PathVariable long requestId) {
         log.info("GET /requests/{{}} X-Sharer-User-Id={}", requestId, userId);
         return mapper.toItemRequestDto(service.getById(userId, requestId));

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -20,9 +21,12 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 public class BookingResponseDTOTest {
     @Autowired
     private JacksonTester<BookingResponseDto> json;
+    private BookingResponseDto bookingResponseDto;
+    private LocalDateTime start;
+    private LocalDateTime end;
 
-    @Test
-    void shouldConvertToValidJSON() throws IOException {
+    @BeforeEach
+    void beforeEach() {
         User booker = User.builder()
                 .id(1)
                 .name("booker")
@@ -40,9 +44,9 @@ public class BookingResponseDTOTest {
                 .owner(owner)
                 .available(Boolean.TRUE)
                 .build();
-        LocalDateTime start = LocalDateTime.of(LocalDate.of(2024, 02, 15),
+        start = LocalDateTime.of(LocalDate.of(2024, 02, 15),
                 LocalTime.of(06, 03, 28));
-        LocalDateTime end = LocalDateTime.of(LocalDate.of(2024, 02, 15),
+        end = LocalDateTime.of(LocalDate.of(2024, 02, 15),
                 LocalTime.of(10, 03, 28));
         Booking booking = Booking.builder()
                 .id(1)
@@ -53,7 +57,7 @@ public class BookingResponseDTOTest {
                 .status(Status.WAITING)
                 .build();
 
-        BookingResponseDto bookingResponseDto = BookingResponseDto.builder()
+        bookingResponseDto = BookingResponseDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
@@ -61,29 +65,116 @@ public class BookingResponseDTOTest {
                 .booker(booking.getBooker())
                 .status(booking.getStatus())
                 .build();
+    }
 
+    @Test
+    void shouldConvertIdToJSON() throws IOException {
         JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
-
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
+    }
+
+    @Test
+    void shouldConvertStartToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.start").isEqualTo(start.toString());
+    }
+
+    @Test
+    void shouldConvertEndToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.end").isEqualTo(end.toString());
+    }
+
+    @Test
+    void shouldConvertItemIdToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathNumberValue("$.item.id").isEqualTo(1);
+    }
+
+    @Test
+    void shouldConvertItemNameToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.item.name").isEqualTo("item");
+    }
+
+    @Test
+    void shouldConvertItemDescriptionToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.item.description")
                 .isEqualTo("description");
+    }
+
+    @Test
+    void shouldConvertItemAvailableToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathBooleanValue("$.item.available").isEqualTo(true);
+    }
+
+    @Test
+    void shouldConvertItemOwnerIdToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathNumberValue("$.item.owner.id").isEqualTo(2);
+    }
+
+    @Test
+    void shouldConvertItemOwnerNameToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.item.owner.name").isEqualTo("owner");
+    }
+
+    @Test
+    void shouldConvertItemOwnerEMailToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.item.owner.email")
                 .isEqualTo("owner@mail.com");
+    }
+
+    @Test
+    void shouldConvertItemRequestToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.item.request").isEqualTo(null);
+    }
+
+    @Test
+    void shouldConvertItemLastBookingToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.item.lastBooking").isEqualTo(null);
+    }
+
+    @Test
+    void shouldConvertItemNextBookingToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.item.nextBooking").isEqualTo(null);
+    }
+
+    @Test
+    void shouldConvertItemCommentsToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.item.comments").isEqualTo(null);
+    }
+
+    @Test
+    void shouldConvertBookerIdToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathNumberValue("$.booker.id").isEqualTo(1);
+    }
+
+    @Test
+    void shouldConvertBookerNameToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.booker.name").isEqualTo("booker");
+    }
+
+    @Test
+    void shouldConvertBookerEmailToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.booker.email")
                 .isEqualTo("booker@mail.com");
+    }
+
+    @Test
+    void shouldConvertStatusToJSON() throws IOException {
+        JsonContent<BookingResponseDto> result = json.write(bookingResponseDto);
         assertThat(result).extractingJsonPathStringValue("$.status").isEqualTo("WAITING");
     }
 }
