@@ -43,8 +43,7 @@ public class ItemController {
     public List<ItemDto> getItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") long ownerId,
                                            @RequestParam(defaultValue = "0") int from,
                                            @RequestParam(defaultValue = "20") int size) {
-        log.info("GET /items/?from={}&size={} X-Sharer-User-Id={}",
-                from, size, ownerId);
+        log.info("GET /items/?from={}&size={} X-Sharer-User-Id={}", from, size, ownerId);
         return mapper.toItemDto(service.getItemsByOwnerId(ownerId, from, size));
     }
 
@@ -70,8 +69,7 @@ public class ItemController {
     public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long bookerId,
                                  @PathVariable long itemId,
                                  @RequestBody CommentDto commentDto) {
-        log.info("POST /items/{}/comment with body {} and X-Sharer-User-Id={}",
-                itemId, commentDto, bookerId);
+        log.info("POST /items/{}/comment with body {} and X-Sharer-User-Id={}", itemId, commentDto, bookerId);
         return mapper.commentToDto(
                 service.addComment(bookerId, itemId, mapper.dtoToComment(commentDto)));
     }

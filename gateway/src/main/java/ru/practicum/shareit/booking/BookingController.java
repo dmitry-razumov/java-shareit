@@ -19,58 +19,56 @@ import javax.validation.constraints.PositiveOrZero;
 @Slf4j
 @Validated
 public class BookingController {
-	private final BookingClient bookingClient;
+    private final BookingClient bookingClient;
 
-	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Object> createBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-												@Validated @RequestBody BookingDto bookingDto) {
-		log.info("POST /bookings with body {} and X-Sharer-User-Id={} ", bookingDto, userId);
-		return bookingClient.createBooking(userId, bookingDto);
-	}
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Object> createBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                @Validated @RequestBody BookingDto bookingDto) {
+        log.info("POST /bookings with body {} and X-Sharer-User-Id={} ", bookingDto, userId);
+        return bookingClient.createBooking(userId, bookingDto);
+    }
 
-	@PatchMapping("/{bookingId}")
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Object> approveBookingById(@RequestHeader("X-Sharer-User-Id") long userId,
-												 @PathVariable long bookingId,
-												 @RequestParam boolean approved) {
-		log.info("PATCH /bookings/{}?approved={} and X-Sharer-User-Id={} ", bookingId, approved, userId);
-		return bookingClient.approveBookingById(userId, bookingId, approved);
-	}
+    @PatchMapping("/{bookingId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Object> approveBookingById(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                     @PathVariable long bookingId,
+                                                     @RequestParam boolean approved) {
+        log.info("PATCH /bookings/{}?approved={} and X-Sharer-User-Id={} ", bookingId, approved, userId);
+        return bookingClient.approveBookingById(userId, bookingId, approved);
+    }
 
-	@GetMapping("/{bookingId}")
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Object> getBookingById(@RequestHeader("X-Sharer-User-Id") long userId,
-												 @PathVariable long bookingId) {
-		log.info("GET /bookings/{}  and X-Sharer-User-Id={} ", bookingId, userId);
-		return bookingClient.getBookingById(userId, bookingId);
-	}
+    @GetMapping("/{bookingId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Object> getBookingById(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                 @PathVariable long bookingId) {
+        log.info("GET /bookings/{}  and X-Sharer-User-Id={} ", bookingId, userId);
+        return bookingClient.getBookingById(userId, bookingId);
+    }
 
-	@GetMapping
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Object> getAllBookingByUser(@RequestHeader("X-Sharer-User-Id") long userId,
-													  @RequestParam(defaultValue = "ALL") String state,
-													  @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-													  @RequestParam(defaultValue = "20") @Positive int size) {
-		log.info("GET /bookings/?state={}&from={}&size={} and X-Sharer-User-Id={} ",
-				state, from, size, userId);
-		return bookingClient.getAllBookingsByUser(userId,
-				BookingState.from(state).orElseThrow(
-						() -> new UnsupportedRequestException("Unknown state: UNSUPPORTED_STATUS")),
-				from, size);
-	}
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Object> getAllBookingByUser(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                      @RequestParam(defaultValue = "ALL") String state,
+                                                      @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                      @RequestParam(defaultValue = "20") @Positive int size) {
+        log.info("GET /bookings/?state={}&from={}&size={} and X-Sharer-User-Id={} ", state, from, size, userId);
+        return bookingClient.getAllBookingsByUser(userId,
+                BookingState.from(state).orElseThrow(
+                        () -> new UnsupportedRequestException("Unknown state: UNSUPPORTED_STATUS")),
+                from, size);
+    }
 
-	@GetMapping("/owner")
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Object> getAllBookingByOwner(@RequestHeader("X-Sharer-User-Id") long userId,
-													 @RequestParam(defaultValue = "ALL") String state,
-													 @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-													 @RequestParam(defaultValue = "20") @Positive int size) {
-		log.info("GET /bookings/owner?state={}&from={}&size={} and X-Sharer-User-Id={} ",
-				state, from, size, userId);
-		return bookingClient.getAllBookingsByOwner(userId,
-				BookingState.from(state).orElseThrow(
-						() -> new UnsupportedRequestException("Unknown state: UNSUPPORTED_STATUS")),
-				from, size);
-	}
+    @GetMapping("/owner")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Object> getAllBookingByOwner(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                       @RequestParam(defaultValue = "ALL") String state,
+                                                       @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                       @RequestParam(defaultValue = "20") @Positive int size) {
+        log.info("GET /bookings/owner?state={}&from={}&size={} and X-Sharer-User-Id={} ", state, from, size, userId);
+        return bookingClient.getAllBookingsByOwner(userId,
+                BookingState.from(state).orElseThrow(
+                        () -> new UnsupportedRequestException("Unknown state: UNSUPPORTED_STATUS")),
+                from, size);
+    }
 }

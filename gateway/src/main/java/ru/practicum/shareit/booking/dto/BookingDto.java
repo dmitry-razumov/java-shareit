@@ -10,11 +10,11 @@ import lombok.Data;
 @Data
 @Builder
 public class BookingDto {
-	private long itemId;
-	@NotNull(message = "Дата начала аренды не должна быть null")
-	@FutureOrPresent (message = "Дата начала аренды должна быть не ранее сегодня")
-	private LocalDateTime start;
-	@NotNull(message = "Дата конца аренды не должна быть null")
-	@Future (message = "Дата конца аренды должна быть позднее сегодня")
-	private LocalDateTime end;
+    private long itemId;
+    @NotNull(message = "Дата начала аренды не должна быть null")
+    @FutureOrPresent (message = "Дата начала аренды должна быть не ранее сегодня")
+    private LocalDateTime start;
+    @NotNull(message = "Дата конца аренды не должна быть null")
+    @Future (message = "Дата конца аренды должна быть позднее сегодня")
+    private LocalDateTime end;
 }

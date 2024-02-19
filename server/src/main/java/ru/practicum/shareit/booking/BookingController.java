@@ -52,8 +52,7 @@ public class BookingController {
                                                  @RequestParam(defaultValue = "ALL") String state,
                                                  @RequestParam(defaultValue = "0") int from,
                                                  @RequestParam(defaultValue = "20") int size) {
-        log.info("GET /bookings/?state={}&from={}&size={} and X-Sharer-User-Id={} ",
-                state, from, size, userId);
+        log.info("GET /bookings/?state={}&from={}&size={} and X-Sharer-User-Id={} ", state, from, size, userId);
         return mapper.toResponseDto(service.getAllByUser(userId, state, from, size));
     }
 
@@ -63,8 +62,7 @@ public class BookingController {
                                                        @RequestParam(defaultValue = "ALL") String state,
                                                        @RequestParam(defaultValue = "0") int from,
                                                        @RequestParam(defaultValue = "20") int size) {
-        log.info("GET /bookings/owner?state={}&from={}&size={} and X-Sharer-User-Id={} ",
-                state, from, size, userId);
+        log.info("GET /bookings/owner?state={}&from={}&size={} and X-Sharer-User-Id={} ", state, from, size, userId);
         return mapper.toResponseDto(service.getAllByOwnerItems(userId, state, from, size));
     }
 }

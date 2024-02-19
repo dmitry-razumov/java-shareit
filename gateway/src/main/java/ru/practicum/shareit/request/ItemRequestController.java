@@ -21,9 +21,8 @@ public class ItemRequestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> createItemRequest(@RequestHeader(name = "X-Sharer-User-Id") long userId,
-                                         @Validated @RequestBody ItemRequestDto itemRequestDto) {
-        log.info("POST /requests with body {} and X-Sharer-User-Id={}",
-                itemRequestDto, userId);
+                                                    @Validated @RequestBody ItemRequestDto itemRequestDto) {
+        log.info("POST /requests with body {} and X-Sharer-User-Id={}", itemRequestDto, userId);
         return itemRequestClient.createItemRequest(userId, itemRequestDto);
     }
 
@@ -40,8 +39,7 @@ public class ItemRequestController {
     public ResponseEntity<Object> getAllItemRequest(@RequestHeader(name = "X-Sharer-User-Id") long userId,
                                                     @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                     @RequestParam(defaultValue = "20") @Positive int size) {
-        log.info("GET /requests/all?from={}&size={} X-Sharer-User-Id={}",
-                from, size, userId);
+        log.info("GET /requests/all?from={}&size={} X-Sharer-User-Id={}", from, size, userId);
         return itemRequestClient.getAllItemRequest(userId, from, size);
     }
 

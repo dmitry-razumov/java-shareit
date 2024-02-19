@@ -42,8 +42,7 @@ public class ItemController {
     public ResponseEntity<Object> getItemsByOwnerId(@RequestHeader("X-Sharer-User-Id") long ownerId,
                                                     @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                     @RequestParam(defaultValue = "20") @Positive int size) {
-        log.info("GET /items/?from={}&size={} X-Sharer-User-Id={}",
-                from, size, ownerId);
+        log.info("GET /items/?from={}&size={} X-Sharer-User-Id={}", from, size, ownerId);
         return itemClient.getItemsByOwnerId(ownerId, from, size);
     }
 
@@ -70,8 +69,7 @@ public class ItemController {
     public ResponseEntity<Object> addComment(@RequestHeader("X-Sharer-User-Id") long bookerId,
                                              @PathVariable long itemId,
                                              @Validated @RequestBody CommentDto commentDto) {
-        log.info("POST /items/{}/comment with body {} and X-Sharer-User-Id={}",
-                itemId, commentDto, bookerId);
+        log.info("POST /items/{}/comment with body {} and X-Sharer-User-Id={}", itemId, commentDto, bookerId);
         return itemClient.addComment(bookerId, itemId, commentDto);
     }
 
