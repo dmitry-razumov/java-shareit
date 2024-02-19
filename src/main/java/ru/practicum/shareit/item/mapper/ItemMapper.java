@@ -12,6 +12,7 @@ import java.util.List;
 public interface ItemMapper {
     @Mapping(target = "lastBooking.bookerId", source = "lastBooking.booker.id")
     @Mapping(target = "nextBooking.bookerId", source = "nextBooking.booker.id")
+    @Mapping(target = "requestId", source = "request.id")
     ItemDto toItemDto(Item item);
 
     List<ItemDto> toItemDto(List<Item> item);
